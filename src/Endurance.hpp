@@ -35,7 +35,20 @@ namespace endurance
             std::copy(elems.begin(), elems.end(), data->begin());
         }
 
-        std::shared_ptr<std::array<type, size>> data; //maybe shared_ptr is better?
+        type& operator[](size_t index)
+        {
+            return (*data)[index];
+        }
+
+        const type& operator[](size_t index) const
+        {
+            return (*data)[index];
+        }
+
+        /*
+        Shared_ptr to avoid copies and to share the underlying data.
+        */
+        std::shared_ptr<std::array<type, size>> data; 
     };
     
 
@@ -49,36 +62,45 @@ namespace endurance
         static constexpr std::array<size_t, sizeof...(Dimensions)> dims = {Dimensions...};
     };
 
-    /*
-    TODO:
-    Check the problems with std::initializer_list (unnecessary copies). In case solve the problem.
-    */
+
+
     template <typename T, size_t ...Dimensions>
-    struct Tensor
+    class Tensor
     {
+    public:
         constexpr Tensor() = default;
 
         //TODO: check Dimensions and # of elements in the NestedInitList
         constexpr Tensor(meta::NestedInitList<T, sizeof...(Dimensions)> elems)
         { 
-            ind = 0;
             init<sizeof...(Dimensions)>(std::move(elems));
         }
 
 
-
-        TensorRaw<T, (Dimensions * ...)> tensor; 
+    private:
         TensorView<Dimensions...> shape;
+        TensorRaw<T, (Dimensions * ...)> tensor; 
 
+
+        template <size_t Levels>
+        constexpr void init(const meta::NestedInitList<T, Levels>& l)
+        {
+            int i = 0;
+            from_nestedlist_to_tensor<Levels>(l, i);
+        }
+
+        /*
+        TODO: check if NestedInitList does unnecessary copies.
+        */
         template <size_t Levels> 
-        constexpr void init(meta::NestedInitList<T, Levels> l)
+        constexpr void from_nestedlist_to_tensor(const meta::NestedInitList<T, Levels>& l, int& curr_index)
         {
             if constexpr(Levels == 1ULL)
             {
                 auto it = l.begin();   
                 while (it != l.end())
                 {
-                    (*tensor.data)[ind++] = *it;
+                    tensor[curr_index++] = *it;
                     ++it;
                 }
                 return;
@@ -89,13 +111,12 @@ namespace endurance
                 auto it = l.begin();   
                 while (it != l.end())
                 {
-                    init<Levels - 1>(*it);
+                    from_nestedlist_to_tensor<Levels - 1>(*it, curr_index);
                     ++it;
                 }
             }
         }
-    private:
-        int ind = 0;
+
     };
 
     // template <typename T, size_t ...Dimensions> 
