@@ -85,7 +85,7 @@ class ReLUOperation(AtomicOperation):
 class Variable:
     """
     This class represents a value (it could be compared to the node of a computational graph).
-    Stores all the informations for calculate the backward pass.
+    Stores all the informations to calculate the backward pass.
     """
     
     #TODO Add support for +=, -=, ecc.
