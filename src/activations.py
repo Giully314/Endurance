@@ -1,6 +1,6 @@
 from variable import Variable, ReLUOperation
 from typing import Union
-
+import math
 
 def _unary_relu(x):
     out = Variable(x.value if x.value > 0 else 0)
@@ -13,4 +13,16 @@ def relu(x: Union[Variable, list[Variable]]):
         out = [_unary_relu(v) for v in x]
     else:
         out = _unary_relu(x)   
+    return out
+
+
+def _unary_sigmoid(x):
+    return 1.0 / (1.0 + math.e ** (-x))
+
+
+def sigmoid(x: Union[Variable, list[Variable]]):
+    if isinstance(x, list):
+        out = [_unary_sigmoid(v) for v in x]
+    else:
+        out = _unary_sigmoid(x)
     return out
