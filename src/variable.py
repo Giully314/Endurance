@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Type, Union
+from typing import Type, Union, overload
 from numbers import Number 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -44,10 +44,12 @@ class AtomicOperation(ABC):
 
 @dataclass
 class SumOperation(AtomicOperation):
+    @overload
     def backward(self) -> None:
         self.v1.gradient += self.out.gradient 
         self.v2.gradient += self.out.gradient
 
+    @overload
     def __repr__(self):
         return f"{self.v1.value} + {self.v2.value}"
 
@@ -55,30 +57,36 @@ class SumOperation(AtomicOperation):
 #Leibniz's rule
 @dataclass
 class MultiplicationOperation(AtomicOperation):
+    @overload
     def backward(self) -> None:
         self.v1.gradient += (self.v2.value * self.out.gradient )
         self.v2.gradient += (self.v1.value * self.out.gradient ) 
-
+    
+    @overload
     def __repr__(self):
         return f"{self.v1.value} * {self.v2.value}"
 
 
 @dataclass
 class PowerOperation(AtomicOperation):
+    @overload
     def backward(self) -> None:
         self.v1.gradient += ( self.v2.value * (self.v1.value ** (self.v2.value - 1))) * self.out.gradient 
         self.v2.gradient += ( math.log(self.v1.value) * self.v1.value ** self.v2.value) * self.out.gradient
 
+    @overload
     def __repr__(self):
         return f"{self.v1.value} ** {self.v2.value}"
 
 
 @dataclass
 class ReLUOperation(AtomicOperation):
+    @overload
     def backward(self) -> None:
         gradient = self.out.gradient if self.v1.value > 0 else 0
         self.v1.gradient += gradient 
 
+    @overload
     def __repr__(self):
         return f"ReLU({self.v1.value})"
 
