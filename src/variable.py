@@ -79,6 +79,8 @@ class ReLUOperation(AtomicOperation):
         gradient = self.out.gradient if self.v1.value > 0 else 0
         self.v1.gradient += gradient 
 
+    def __repr__(self):
+        return f"ReLU({self.v1.value})"
 
 
 
