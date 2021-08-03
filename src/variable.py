@@ -183,21 +183,11 @@ class Variable:
             
             ordered_nodes.append(node)
 
-
         topological_sort(self)
-        print("\nvisited")
-        for v in visited:
-            print(v.value)
-
-        print("\nordered nodes")
-        for v in ordered_nodes:
-            print(v.value)
-
-        print()
+        
         self.gradient = 1.0
         for v in reversed(ordered_nodes):
             if v.operation is not None:
-                print(f"Calling operation of {v}")
                 v.operation.backward()
 
 
