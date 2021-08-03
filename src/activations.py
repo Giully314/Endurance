@@ -16,6 +16,7 @@ def relu(x: Union[Variable, list[Variable]]):
     return out
 
 
+#maybe optimize for backward pass with (1 - sigmoid) * sigmoid
 def _unary_sigmoid(x):
     return 1.0 / (1.0 + math.e ** (-x))
 
