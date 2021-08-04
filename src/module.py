@@ -1,9 +1,12 @@
 from variable import Variable
 import random
-from activations import relu
 from abc import ABC, abstractmethod
 
 class Module(ABC):
+    """
+    Abstract class that provides basic operations on Variable (like zero_gradient) and defines an interface for neural network 
+    operations.
+    """
     
     @abstractmethod
     def parameters(self) -> list[Variable]:
@@ -13,11 +16,21 @@ class Module(ABC):
         ...
 
     @abstractmethod
+    def compute(self, x):
+        """
+        Define the computation of the module.
+        """
+        ...
+    
     def zero_gradient(self) -> None:
         """
         Reset the gradient of all parameters.
         """
-        ...
+        for p in self.parameters():
+            p.zero_gradient()
+
+    def __call__(self, x):
+        return self.compute(x)
 
 
 class ArtificialNeuron(Module):
@@ -41,11 +54,14 @@ class ArtificialNeuron(Module):
     def parameters(self) -> list[Variable]:
         return self.weights + [self.bias]
 
-    def zero_gradient(self):
-        for p in self.parameters():
-            p.zero_gradient()
-
-    def __call__(self, x):
-        return self.compute(x)
 
 
+
+class LinearLayer(Module):
+    def __init__(self, input_features, output_features):
+        self.neurons = [ArtificialNeuron(input_features) for _ in output_features]
+
+
+    
+    def parameters(self) -> list[Variable]:
+        return [p for neuron in self.neurons for p in neuron.parameters()]
