@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Type, Union
+from typing import Union
 from numbers import Number 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
