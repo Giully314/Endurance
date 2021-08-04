@@ -99,14 +99,11 @@ class Variable:
     
     #TODO Add support for +=, -=, ecc.
 
-    def __init__(self, value: Number, dtype: Type = float):
-        self.value = dtype(value)
-        self.dtype = dtype  #for now i don't check if 2 variables have the same type for operations.
+    def __init__(self, value: Number):
+        self.value = float(value)
+        # self.dtype = dtype  #for now i don't check if 2 variables have the same type for operations.
         self.gradient = 0.0
         self.operation = None
-
-        if not isinstance(self.dtype(), (int, float)):
-            raise TypeError("Type accepted: int and float")
 
 
     def zero_gradient(self):
@@ -117,7 +114,7 @@ class Variable:
 
     def __add__(self, other: Union[Number, Variable]) -> Variable:
         other = other if isinstance(other, Variable) else Variable(other)
-        out = Variable(self.value + other.value, self.dtype)       
+        out = Variable(self.value + other.value)       
         op = SumOperation(self, other, out)
         out.operation = op
         return out 
@@ -129,7 +126,7 @@ class Variable:
 
     def __mul__(self, other: Union[Number, Variable]) -> Variable:
         other = other if isinstance(other, Variable) else Variable(other)
-        out = Variable(self.value * other.value, self.dtype)
+        out = Variable(self.value * other.value)
         op = MultiplicationOperation(self, other, out)
         out.operation = op
         return out
@@ -140,7 +137,7 @@ class Variable:
 
     def __pow__(self, other: Union[Number, Variable]) -> Variable:
         other = other if isinstance(other, Variable) else Variable(other)
-        out = Variable(self.value ** other.value, self.dtype)
+        out = Variable(self.value ** other.value)
         op = PowerOperation(self, other, out)
         out.operation = op
         return out
@@ -203,7 +200,3 @@ class Variable:
     def __repr__(self):
         return f"Value: {self.value} , Gradient: {self.gradient} , Operation: {self.operation}"
     
-
-    def check_type(self, other: Variable) -> bool:
-        if self.dtype != other.dtype:
-            raise TypeError(f"Different types: {self.dtype} and {other.dtype}")
