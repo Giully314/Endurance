@@ -1,4 +1,4 @@
-from variable import Variable, ReLUOperation
+from endurance.variable import Variable, ReLUOperation
 from typing import Union
 import math
 

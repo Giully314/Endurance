@@ -1,4 +1,4 @@
-from variable import Variable
+from endurance.variable import Variable
 import random
 from abc import ABC, abstractmethod
 from typing import Union

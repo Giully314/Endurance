@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from variable import Variable
+from endurance.variable import Variable
 import random
 
 
