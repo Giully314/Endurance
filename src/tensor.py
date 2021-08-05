@@ -10,24 +10,24 @@ import random
 
 
 #Not contigous list.
-def _nested_list_random_init(size):
-    assert(isinstance(size, (tuple, list)))
-    if len(size) == 1:
-        return [Variable(random.uniform(-1, 1)) for _ in range(size[0])]
+def _nested_list_random_init(shape):
+    assert(isinstance(shape, (tuple, list)))
+    if len(shape) == 1:
+        return [Variable(random.uniform(-1, 1)) for _ in range(shape[0])]
 
-    return [_nested_list_random_init(size[1:]) for _ in range(size[0])]
+    return [_nested_list_random_init(shape[1:]) for _ in range(shape[0])]
 
 
 #Contigous list
-def _cont_list_random_init(size) -> list:
-    assert(isinstance(size, (tuple, list)))
+def _cont_list_random_init(shape) -> list:
+    assert(isinstance(shape, (tuple, list)))
     
-    if len(size) == 1:
-        return [Variable(random.uniform(-1, 1)) for _ in range(size[0])]
+    if len(shape) == 1:
+        return [Variable(random.uniform(-1, 1)) for _ in range(shape[0])]
 
     out = []
-    for _ in range(size[0]):
-        out += _cont_list_random_init(size[1:])
+    for _ in range(shape[0]):
+        out += _cont_list_random_init(shape[1:])
 
     return out
 
@@ -65,6 +65,11 @@ def create_tensor_from_array(array) -> Tensor:
 
     return t
 
+def create_tensor(shape):
+    t = Tensor()
+    t.shape = tuple(shape)
+    t.tensor = _cont_list_random_init(shape)
+
 
 class Tensor:
     """
@@ -74,7 +79,7 @@ class Tensor:
     """
 
     #TODO add property decorator
-    #TODO initialize a tensor from a list/numpy array
+    #TODO add TensorView
     def __init__(self):
         self.shape = None
         self.tensor = None
