@@ -69,6 +69,8 @@ def create_tensor(shape):
     t = Tensor()
     t.shape = tuple(shape)
     t.tensor = _cont_list_random_init(shape)
+    
+    return t
 
 
 class Tensor:
