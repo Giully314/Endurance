@@ -1,6 +1,7 @@
 from variable import Variable
 import random
 from abc import ABC, abstractmethod
+from typing import Union
 
 class Module(ABC):
     """
@@ -16,7 +17,7 @@ class Module(ABC):
         ...
 
     @abstractmethod
-    def compute(self, x):
+    def compute(self, x: Union[Variable, list[Variable]]) -> Union[Variable, list[Variable]]:
         """
         Define the computation of the module.
         """
@@ -33,6 +34,7 @@ class Module(ABC):
         return self.compute(x)
 
 
+
 class ArtificialNeuron(Module):
     def __init__(self, in_features):
         
@@ -45,16 +47,14 @@ class ArtificialNeuron(Module):
         # self.activation = activation if activation is not None else relu
 
 
-    def compute(self, x):
+    def compute(self, x: Union[Variable, list[Variable]]) -> Union[Variable, list[Variable]]:
         assert(len(x) == len(self.weights))
 
-        out = sum([x * v for x, v in zip(self.weights, x)], self.bias)
+        out = sum([z * v for z, v in zip(self.weights, x)], self.bias)
         return out
 
     def parameters(self) -> list[Variable]:
         return self.weights + [self.bias]
-
-
 
 
 class LinearLayer(Module):
@@ -62,6 +62,25 @@ class LinearLayer(Module):
         self.neurons = [ArtificialNeuron(input_features) for _ in output_features]
 
 
-    
+    def compute(self, x: Union[Variable, list[Variable]]) -> Union[Variable, list[Variable]]:
+        out = [neuron(x) for neuron in self.neurons]
+        
+        return out[0] if len(out) == 1 else out
+
+
     def parameters(self) -> list[Variable]:
         return [p for neuron in self.neurons for p in neuron.parameters()]
+
+
+class FeedForwardNetwork(Module):
+    def __init__(self, neurons_per_layer: list[int]):
+        self.layers = [LinearLayer(neurons_per_layer[i], neurons_per_layer[i+1]) for i in range(len(neurons_per_layer) - 1)]
+
+    def compute(self, x: Union[Variable, list[Variable]]) -> Union[Variable, list[Variable]]:
+        out = x
+        for layer in self.layers:
+            out = layer(out)
+        return out
+
+    def parameters(self) -> list[Variable]:
+        return [p for layer in self.layers for p in layer.parameters()]
