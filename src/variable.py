@@ -72,7 +72,9 @@ class PowerOperation(AtomicOperation):
 
     def backward(self) -> None:
         self.v1.gradient += ( self.v2.value * (self.v1.value ** (self.v2.value - 1))) * self.out.gradient 
-        self.v2.gradient += ( math.log(self.v1.value) * self.v1.value ** self.v2.value) * self.out.gradient
+        
+        #TODO solve math domain error for the log
+        #self.v2.gradient += ( math.log(self.v1.value) * self.v1.value ** self.v2.value) * self.out.gradient
 
 
     def __repr__(self):
