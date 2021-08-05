@@ -3,6 +3,10 @@ import random
 from abc import ABC, abstractmethod
 from typing import Union
 
+
+#TODO Refactor using Tensor class.
+
+
 class Module(ABC):
     """
     Abstract class that provides basic operations on Variable (like zero_gradient) and defines an interface for neural network 
