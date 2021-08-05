@@ -59,7 +59,7 @@ class ArtificialNeuron(Module):
 
 class LinearLayer(Module):
     def __init__(self, input_features, output_features):
-        self.neurons = [ArtificialNeuron(input_features) for _ in output_features]
+        self.neurons = [ArtificialNeuron(input_features) for _ in range(output_features)]
 
 
     def compute(self, x: Union[Variable, list[Variable]]) -> Union[Variable, list[Variable]]:
