@@ -4,9 +4,6 @@ from abc import ABC, abstractmethod
 from typing import Union
 
 
-#TODO Refactor using Tensor class.
-
-
 class Module(ABC):
     """
     Abstract class that provides basic operations on Variable (like zero_gradient) and defines an interface for neural network 
@@ -60,6 +57,9 @@ class ArtificialNeuron(Module):
     def parameters(self) -> list[Variable]:
         return self.weights + [self.bias]
 
+    def __repr__(self) -> str:
+        return f"ArtificialNeuron({len(self.weights)})"
+
 
 class LinearLayer(Module):
     def __init__(self, input_features, output_features):
@@ -76,15 +76,6 @@ class LinearLayer(Module):
         return [p for neuron in self.neurons for p in neuron.parameters()]
 
 
-class FeedForwardNetwork(Module):
-    def __init__(self, neurons_per_layer: list[int]):
-        self.layers = [LinearLayer(neurons_per_layer[i], neurons_per_layer[i+1]) for i in range(len(neurons_per_layer) - 1)]
+    def __repr__(self) -> str:
+        return " ".join(str(neuron) for neuron in self.neurons)
 
-    def compute(self, x: Union[Variable, list[Variable]]) -> Union[Variable, list[Variable]]:
-        out = x
-        for layer in self.layers:
-            out = layer(out)
-        return out
-
-    def parameters(self) -> list[Variable]:
-        return [p for layer in self.layers for p in layer.parameters()]
